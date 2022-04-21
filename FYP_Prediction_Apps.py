@@ -3,23 +3,10 @@ import pandas as pd
 import streamlit as st
 from sklearn.model_selection import train_test_split
 from xgboost import XGBRegressor
-import plotly.figure_factory as ff
 import plotly.express as px
 import plotly.graph_objects as go
 from sklearn.metrics import mean_squared_error,mean_absolute_error
-import matplotlib.pyplot as plt
 from PIL import Image
-from zipfile import ZipFile 
-
-with ZipFile('listings_transformed_enc.zip', 'r') as zipObj: 
-    # Extract all the contents of zip file in current directory 
-    zipdata = zipObj.extractall()
-
-print(zipdata)
-
-with ZipFile('listings_new.zip', 'r') as zipObj: 
-    # Extract all the contents of zip file in current directory 
-    zipdata2 = zipObj.extractall()
 
 #----------------------------------------------------------------------------------------------------------------------------------
 def summary_table(df):
@@ -97,7 +84,7 @@ st.set_page_config('Airbnb Price Prediction App')
 image = Image.open('D:\Academic\Airbnb_data\Airbnb-logo.jpg')
 st.image(image, width = 300)
 
-data = pd.read_csv("D:/Academic/Airbnb_data/listings_transformed_enc.csv")
+data = pd.read_csv("D:/Academic/Airbnb_data/listings_transformed_enc.zip")
 
 X = data[['host_response_rate','host_acceptance_rate', 'bedrooms','bathroom', 'beds','accommodates','neighborhood_enc','room_type_enc','host_response_time_enc','host_is_superhost_enc','instant_bookable_enc','has_availability_enc']]
 Y = data['log_price']
@@ -109,7 +96,7 @@ menu = st.sidebar.selectbox("Menu", menu_list)
 
 if menu == 'Exploratory Data Analysis':
     st.title('Exploratory Data Analysis of Airbnb Properties Price for Different Cities')
-    data = pd.read_csv('D:/Academic/Airbnb_data/listings_new.csv')
+    data = pd.read_csv('D:/Academic/Airbnb_data/listings_new.zip')
 
     st.header('Descriptive Analysis')
     st.table(summary_table(data))
