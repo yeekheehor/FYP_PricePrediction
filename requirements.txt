@@ -8,4 +8,4 @@ pandas==1.2.3
 joblib==0.16.0
 scikit-learn
 click==8
-xgboost==0.0
+xgboost==1.6.0
