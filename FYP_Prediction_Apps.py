@@ -10,15 +10,6 @@ import plotly.graph_objects as go
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 import matplotlib.pyplot as plt
 from PIL import Image
-from zipfile import ZipFile 
-
-with ZipFile('listings_transformed_enc.zip', 'r') as zipObj: 
-    # Extract all the contents of zip file in current directory 
-    zipdata = zipObj.extractall()
-
-with ZipFile('listings_new.zip', 'r') as zipObj: 
-    # Extract all the contents of zip file in current directory 
-    zipdata2 = zipObj.extractall()
     
 #----------------------------------------------------------------------------------------------------------------------------------
 def summary_table(df):
@@ -108,7 +99,7 @@ menu = st.sidebar.selectbox("Menu", menu_list)
 
 if menu == 'Exploratory Data Analysis':
     st.title('Exploratory Data Analysis of Airbnb Properties Price for Different Cities')
-    data = pd.read_csv(zipdata2)
+    data = pd.read_csv('listings_new.zip')
 
     st.header('Descriptive Analysis')
     st.table(summary_table(data))
@@ -151,6 +142,7 @@ if menu == 'Exploratory Data Analysis':
 
 
 elif menu == 'Model Prediction':
+    data = pd.read_csv('listings_transformed_enc.zip')
     country_list = ['London', 'New York', 'Singapore']
     country = st.sidebar.radio("Select Country", country_list) 
     
