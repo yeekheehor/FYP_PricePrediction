@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -10,7 +9,18 @@ import plotly.graph_objects as go
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 import matplotlib.pyplot as plt
 from PIL import Image
-    
+from zipfile import ZipFile 
+
+with ZipFile('listings_transformed_enc.zip', 'r') as zipObj: 
+    # Extract all the contents of zip file in current directory 
+    zipdata = zipObj.extractall()
+
+print(zipdata)
+
+with ZipFile('listings_new.zip', 'r') as zipObj: 
+    # Extract all the contents of zip file in current directory 
+    zipdata2 = zipObj.extractall()
+
 #----------------------------------------------------------------------------------------------------------------------------------
 def summary_table(df):
 #Return a summary table with the descriptive statistics about the dataframe.
@@ -82,14 +92,13 @@ def plot_bar(data, x, y, height,  margin, title_text=None):
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
-
-
 # set page title
 st.set_page_config('Airbnb Price Prediction App')
-image = Image.open('Airbnb-logo.jpg')
+image = Image.open('D:\Academic\Airbnb_data\Airbnb-logo.jpg')
 st.image(image, width = 300)
 
-data = pd.read_csv('listings_transformed_enc.zip')
+data = pd.read_csv("D:/Academic/Airbnb_data/listings_transformed_enc.csv")
+
 X = data[['host_response_rate','host_acceptance_rate', 'bedrooms','bathroom', 'beds','accommodates','neighborhood_enc','room_type_enc','host_response_time_enc','host_is_superhost_enc','instant_bookable_enc','has_availability_enc']]
 Y = data['log_price']
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state = 42)
@@ -100,7 +109,7 @@ menu = st.sidebar.selectbox("Menu", menu_list)
 
 if menu == 'Exploratory Data Analysis':
     st.title('Exploratory Data Analysis of Airbnb Properties Price for Different Cities')
-    data = pd.read_csv('listings_new.zip')
+    data = pd.read_csv('D:/Academic/Airbnb_data/listings_new.csv')
 
     st.header('Descriptive Analysis')
     st.table(summary_table(data))
@@ -143,7 +152,6 @@ if menu == 'Exploratory Data Analysis':
 
 
 elif menu == 'Model Prediction':
-    
     country_list = ['London', 'New York', 'Singapore']
     country = st.sidebar.radio("Select Country", country_list) 
     
@@ -437,13 +445,14 @@ elif menu == 'Model Prediction':
         value_to_predict = pd.DataFrame([predict_array], columns=X.columns)
 
         xgb_tuned = XGBRegressor(base_score=0.5, booster='gbtree', colsample_bylevel=1,
-                colsample_bynode=1, colsample_bytree=1, enable_categorical=False,
-                gamma=0, gpu_id=-1, importance_type=None,
-                interaction_constraints='', learning_rate=1, max_delta_step=0,
-                max_depth=2, min_child_weight=3,monotone_constraints='()', n_estimators=900, n_jobs=8,
-                num_parallel_tree=1, predictor='auto', random_state=0, reg_alpha=0,
-                reg_lambda=1, scale_pos_weight=1, subsample=1, tree_method='exact',
-                validate_parameters=1, verbosity=None)
+             colsample_bynode=1, colsample_bytree=1, enable_categorical=False,
+             gamma=0, gpu_id=-1, importance_type=None,
+             interaction_constraints='', learning_rate=0.1, max_delta_step=0,
+             max_depth=9, min_child_weight=1, 
+             monotone_constraints='()', n_estimators=900, n_jobs=8,
+             num_parallel_tree=1, predictor='auto', random_state=0, reg_alpha=0,
+             reg_lambda=1, scale_pos_weight=1, subsample=1, tree_method='exact',
+             validate_parameters=1, verbosity=None)
 
         xgb_tuned.fit(X_train.values, Y_train.values)     
         xgb_tuned_pred = xgb_tuned.predict(X_test.values)
