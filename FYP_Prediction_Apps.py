@@ -9,13 +9,13 @@ import plotly.graph_objects as go
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 import matplotlib.pyplot as plt
 from PIL import Image
+from zipfile import ZipFile 
 
-
-from zipfile import ZipFile with ZipFile('listings_transformed_enc.zip', 'r') as zipObj: 
+with ZipFile('listings_transformed_enc.zip', 'r') as zipObj: 
     # Extract all the contents of zip file in current directory 
     zipdata = zipObj.extractall()
 
-from zipfile import ZipFile with ZipFile('listings_new.zip', 'r') as zipObj: 
+with ZipFile('listings_new.zip', 'r') as zipObj: 
     # Extract all the contents of zip file in current directory 
     zipdata2 = zipObj.extractall()
     
@@ -93,9 +93,9 @@ def plot_bar(data, x, y, height,  margin, title_text=None):
 data = pd.read_csv(zipdata)
 
 # set page title
-# st.set_page_config('Airbnb Price Prediction App')
-# image = Image.open('D:\Academic\Airbnb_data\Airbnb-logo.jpg')
-# st.image(image, width = 300)
+st.set_page_config('Airbnb Price Prediction App')
+image = Image.open('Airbnb-logo.jpg')
+st.image(image, width = 300)
 
 X = data[['host_response_rate','host_acceptance_rate', 'bedrooms','bathroom', 'beds','accommodates','neighborhood_enc','room_type_enc','host_response_time_enc','host_is_superhost_enc','instant_bookable_enc','has_availability_enc']]
 Y = data['log_price']
