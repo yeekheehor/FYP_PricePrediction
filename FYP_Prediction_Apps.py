@@ -82,7 +82,7 @@ def plot_bar(data, x, y, height,  margin, title_text=None):
 
 
 #----------------------------------------------------------------------------------------------------------------------------------
-data = pd.read_csv(zipdata)
+
 
 # set page title
 st.set_page_config('Airbnb Price Prediction App')
