@@ -89,6 +89,7 @@ st.set_page_config('Airbnb Price Prediction App')
 image = Image.open('Airbnb-logo.jpg')
 st.image(image, width = 300)
 
+data = pd.read_csv('listings_transformed_enc.zip')
 X = data[['host_response_rate','host_acceptance_rate', 'bedrooms','bathroom', 'beds','accommodates','neighborhood_enc','room_type_enc','host_response_time_enc','host_is_superhost_enc','instant_bookable_enc','has_availability_enc']]
 Y = data['log_price']
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state = 42)
@@ -142,7 +143,7 @@ if menu == 'Exploratory Data Analysis':
 
 
 elif menu == 'Model Prediction':
-    data = pd.read_csv('listings_transformed_enc.zip')
+    
     country_list = ['London', 'New York', 'Singapore']
     country = st.sidebar.radio("Select Country", country_list) 
     
