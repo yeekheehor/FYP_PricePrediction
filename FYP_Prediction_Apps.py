@@ -81,10 +81,10 @@ def plot_bar(data, x, y, height,  margin, title_text=None):
 #----------------------------------------------------------------------------------------------------------------------------------
 # set page title
 st.set_page_config('Airbnb Price Prediction App')
-image = Image.open('D:/Academic/FYP_Hor Yee Khee_TP051356_SourceCode/Airbnb-logo.jpg')
+image = Image.open('Airbnb-logo.jpg')
 st.image(image, width = 300)
 
-data = pd.read_csv("D:/Academic/FYP_Hor Yee Khee_TP051356_SourceCode/listings_transformed_enc.csv")
+data = pd.read_csv("listings_transformed_enc.zip")
 
 X = data[['host_response_rate','host_acceptance_rate', 'bedrooms','bathroom', 'beds','accommodates','neighborhood_enc','room_type_enc','Cooking_Basics', 'Entertainment','Air_Conditioning','Television_SoundSystem','instant_bookable_enc','has_availability_enc']]
 Y = data['log_price']
@@ -96,7 +96,7 @@ menu = st.sidebar.selectbox("Menu", menu_list)
 
 if menu == 'Exploratory Data Analysis':
     st.title('Exploratory Data Analysis of Airbnb Properties Price for Different Cities')
-    data = pd.read_csv('D:/Academic/FYP_Hor Yee Khee_TP051356_SourceCode/listings_new.csv')
+    data = pd.read_csv('listings_new.zip')
 
     st.header('Descriptive Analysis')
     st.table(summary_table(data))
