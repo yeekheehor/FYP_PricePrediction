@@ -81,12 +81,12 @@ def plot_bar(data, x, y, height,  margin, title_text=None):
 #----------------------------------------------------------------------------------------------------------------------------------
 # set page title
 st.set_page_config('Airbnb Price Prediction App')
-image = Image.open('Airbnb-logo.jpg')
+image = Image.open('D:/Academic/FYP_Hor Yee Khee_TP051356_SourceCode/Airbnb-logo.jpg')
 st.image(image, width = 300)
 
-data = pd.read_csv("listings_transformed_enc.zip")
+data = pd.read_csv("D:/Academic/FYP_Hor Yee Khee_TP051356_SourceCode/listings_transformed_enc.csv")
 
-X = data[['host_response_rate','host_acceptance_rate', 'bedrooms','bathroom', 'beds','accommodates','neighborhood_enc','room_type_enc','host_response_time_enc','host_is_superhost_enc','instant_bookable_enc','has_availability_enc']]
+X = data[['host_response_rate','host_acceptance_rate', 'bedrooms','bathroom', 'beds','accommodates','neighborhood_enc','room_type_enc','Cooking_Basics', 'Entertainment','Air_Conditioning','Television_SoundSystem','instant_bookable_enc','has_availability_enc']]
 Y = data['log_price']
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state = 42)
 
@@ -96,7 +96,7 @@ menu = st.sidebar.selectbox("Menu", menu_list)
 
 if menu == 'Exploratory Data Analysis':
     st.title('Exploratory Data Analysis of Airbnb Properties Price for Different Cities')
-    data = pd.read_csv('listings_new.zip')
+    data = pd.read_csv('D:/Academic/FYP_Hor Yee Khee_TP051356_SourceCode/listings_new.csv')
 
     st.header('Descriptive Analysis')
     st.table(summary_table(data))
@@ -147,7 +147,6 @@ elif menu == 'Model Prediction':
         room_type_list = ['Entire home/apt','Hotel room','Private room','Shared room']
         instant_booking_list = ['t','f']
         has_availability_list = ['t','f']
-        superhost_list = ['t','f']
         host_response_time_list = ['a few days or more','within a day','within a few hours','within an hour']
         london_neighborhood_list = ['Barking and Dagenham', 'Barnet',  'Bexley','Brent', 'Bromley', 'Camden', 'City of London', 
         'Croydon', 'Ealing', 'Enfield', 'Greenwich', 'Hackney', 'Hammersmith and Fulham', 'Haringey','Harrow',
@@ -160,13 +159,21 @@ elif menu == 'Model Prediction':
         room_type_choice = st.sidebar.selectbox(label='Room Type', options=room_type_list)
         room_type = data.loc[data.room_type == room_type_choice, 'room_type_enc'].values[0]
 
-        accomodates = st.sidebar.slider('Number of guests', 0, 16, 7)
+        accomodates = st.sidebar.slider('Number of guests', 1, 16, 7)
 
-        bedroom = st.sidebar.slider('Number of bedrooms', 0, 22, 4)
+        bedroom = st.sidebar.slider('Number of bedrooms', 1, 22, 4)
 
-        bathroom = st.sidebar.slider('Number of bathrooms', 0, 21, 10)
+        bathroom = st.sidebar.slider('Number of bathrooms', 1, 21, 10)
 
-        bed = st.sidebar.slider('Number of beds', 0, 58, 7)
+        bed = st.sidebar.slider('Number of beds', 1, 58, 7)
+
+        Cooking_Basics = st.sidebar.slider('Have Cooking Basics? (1 = Yes; 0 = No)',0 ,1,0)
+
+        Entertainment = st.sidebar.slider('Have Home Entertainment? (1 = Yes; 0 = No)',0,1,1)
+
+        Television_SoundSystem = st.sidebar.slider('Have Television / Sound System?? (1 = Yes; 0 = No)',0,1,1)
+
+        Air_Conditioning = st.sidebar.slider('Have Air Conditioning?? (1 = Yes; 0 = No)',0,1,0)
 
         instant_booking_choice = st.sidebar.selectbox(label='Instant_booking (t = True; f = False)', options=instant_booking_list)
         instant_booking = data.loc[data.instant_bookable == instant_booking_choice, 'instant_bookable_enc'].values[0]
@@ -174,12 +181,6 @@ elif menu == 'Model Prediction':
         has_availability_choice = st.sidebar.selectbox(label='Has Availability (t = True; f = False)', options=has_availability_list)
         has_availability = data.loc[data.has_availability == has_availability_choice, 'has_availability_enc'].values[0]
 
-        superhost_choice = st.sidebar.selectbox(label='Superhost (t = True; f = False)', options=superhost_list)
-        superhost = data.loc[data.host_is_superhost == superhost_choice, 'host_is_superhost_enc'].values[0]
-
-        host_response_time_choice = st.sidebar.selectbox(label='host_response_time', options=host_response_time_list)
-        host_response_time = data.loc[data.host_response_time == host_response_time_choice, 'host_response_time_enc'].values[0]
-        
         host_response_rate = st.sidebar.slider('Host Response Rate(%)', 0, 100, 80)   
         host_acceptance_rate = st.sidebar.slider('Host Acceptance Rate(%)', 0, 100, 75)
 
@@ -188,14 +189,16 @@ elif menu == 'Model Prediction':
         'bedroom':bedroom,
         'bathroom':bathroom, 
         'bed':bed,
-        'accomodates':accomodates}
+        'accomodates':accomodates,
+        'air conditioning':Air_Conditioning,
+        'cooking_basics':Cooking_Basics,
+        'home entertainment':Entertainment,
+        'Television / sound system':Television_SoundSystem}
 
         user_input_cat = {'london_neighborhood':london_neighborhood_choice,
         'room_type':room_type_choice,
         'instant_booking':instant_booking_choice,
-        'has_availability':has_availability_choice,
-        'is_superhost':superhost_choice,
-        'host_response_time':host_response_time_choice}
+        'has_availability':has_availability_choice,}
 
         num_data, cat_data = st.columns(2)
         user_input_num = pd.DataFrame(user_input_num, index = ['Input Data'])
@@ -206,7 +209,7 @@ elif menu == 'Model Prediction':
         user_input_cat = user_input_cat.T
         cat_data.write(user_input_cat)  
 
-        predict_array = [host_response_rate,host_acceptance_rate, bedroom,bathroom, bed,accomodates,london_neighborhood,room_type,instant_booking,has_availability,superhost,host_response_time]
+        predict_array = [host_response_rate,host_acceptance_rate, bedroom,bathroom, bed,accomodates,london_neighborhood,room_type,instant_booking,has_availability,Air_Conditioning,Cooking_Basics,Entertainment,Television_SoundSystem]
 
         value_to_predict = pd.DataFrame([predict_array], columns=X.columns)
 
@@ -221,16 +224,26 @@ elif menu == 'Model Prediction':
 
         xgb_tuned.fit(X_train.values, Y_train.values)     
         xgb_tuned_pred = xgb_tuned.predict(X_test.values)
-        xgb_score = xgb_tuned.score(X_train.values, Y_train.values)
-        xgb_MSE = mean_squared_error(Y_test, xgb_tuned_pred)
-        xgb_MAE = mean_absolute_error(Y_test, xgb_tuned_pred)
+        xgb_score = round(xgb_tuned.score(X_train.values, Y_train.values),4)
+        xgb_MSE =  round(mean_squared_error(Y_test, xgb_tuned_pred),4)
+        xgb_MAE =  round(mean_absolute_error(Y_test, xgb_tuned_pred),4)
 
         if st.button('Predict'):
-            st.write('R2', xgb_score)
-            st.write('MSE', xgb_MSE)
-            st.write('MAE', xgb_MAE)
-            predicted_value = np.expm1(xgb_tuned.predict(value_to_predict)[0])
-            st.success(f'The predicted value is $ {round(predicted_value, 2)}')
+            st.markdown("""---""")
+
+            left_column, middle_column, right_column = st.columns(3)
+            with left_column:
+                st.subheader("R2:")
+                st.write(f"{xgb_score}")
+            with middle_column:
+                st.subheader("MSE:")
+                st.write(f"{xgb_MSE}")
+            with right_column:
+                st.subheader("MAE:")
+                st.write(f"{xgb_MAE}")
+                
+            predicted_value = round(np.expm1(xgb_tuned.predict(value_to_predict)[0]),2)
+            st.success(f'The predicted value is $ {predicted_value}')
 
             #Plot feature importance
             ft_weights_xgb_tuned = pd.DataFrame(xgb_tuned.feature_importances_, columns=['weight'], index=X.columns)
@@ -283,13 +296,21 @@ elif menu == 'Model Prediction':
         room_type_choice = st.sidebar.selectbox(label='Room Type', options=room_type_list)
         room_type = data.loc[data.room_type == room_type_choice, 'room_type_enc'].values[0]
 
-        accomodates = st.sidebar.slider('Number of guests', 0, 16, 7)
+        accomodates = st.sidebar.slider('Number of guests', 1, 16, 7)
 
-        bedroom = st.sidebar.slider('Number of bedrooms', 0, 22, 4)
+        bedroom = st.sidebar.slider('Number of bedrooms', 1, 22, 4)
 
-        bathroom = st.sidebar.slider('Number of bathrooms', 0, 21, 10)
+        bathroom = st.sidebar.slider('Number of bathrooms', 1, 21, 10)
 
-        bed = st.sidebar.slider('Number of beds', 0, 58, 7)
+        bed = st.sidebar.slider('Number of beds', 1, 58, 7)
+        
+        Cooking_Basics = st.sidebar.slider('Have Cooking Basics? (1 = Yes; 0 = No)', 0,1,1)
+
+        Entertainment = st.sidebar.slider('Have Home Entertainment? (1 = Yes; 0 = No)', 0,1,1)
+
+        Television_SoundSystem = st.sidebar.slider('Have Television / Sound System?? (1 = Yes; 0 = No)', 0,1,1)
+
+        Air_Conditioning = st.sidebar.slider('Have Air Conditioning?? (1 = Yes; 0 = No)', 0,1,1)
 
         instant_booking_choice = st.sidebar.selectbox(label='Instant_booking (t = True; f = False)', options=instant_booking_list)
         instant_booking = data.loc[data.instant_bookable == instant_booking_choice, 'instant_bookable_enc'].values[0]
@@ -297,28 +318,24 @@ elif menu == 'Model Prediction':
         has_availability_choice = st.sidebar.selectbox(label='Has Availability (t = True; f = False)', options=has_availability_list)
         has_availability = data.loc[data.has_availability == has_availability_choice, 'has_availability_enc'].values[0]
 
-        superhost_choice = st.sidebar.selectbox(label='Superhost (t = True; f = False)', options=superhost_list)
-        superhost = data.loc[data.host_is_superhost == superhost_choice, 'host_is_superhost_enc'].values[0]
-
-        host_response_time_choice = st.sidebar.selectbox(label='host_response_time', options=host_response_time_list)
-        host_response_time = data.loc[data.host_response_time == host_response_time_choice, 'host_response_time_enc'].values[0]
-        
-        host_response_rate = st.sidebar.slider('Host Response Rate(%)', 0, 100, 78)   
-        host_acceptance_rate = st.sidebar.slider('Host Acceptance Rate(%)', 0, 100, 92)
+        host_response_rate = st.sidebar.slider('Host Response Rate(%)', 0, 100, 80)   
+        host_acceptance_rate = st.sidebar.slider('Host Acceptance Rate(%)', 0, 100, 75)
 
         user_input_num = {'host_response_rate': host_response_rate,
         'host_acceptance_rate':host_acceptance_rate, 
         'bedroom':bedroom,
         'bathroom':bathroom, 
         'bed':bed,
-        'accomodates':accomodates}
+        'accomodates':accomodates,
+        'air conditioning':Air_Conditioning,
+        'cooking_basics':Cooking_Basics,
+        'home entertainment':Entertainment,
+        'Television / sound system':Television_SoundSystem}
 
         user_input_cat = {'ny_neighborhood':ny_neighborhood_choice,
         'room_type':room_type_choice,
         'instant_booking':instant_booking_choice,
-        'has_availability':has_availability_choice,
-        'is_superhost':superhost_choice,
-        'host_response_time':host_response_time_choice}
+        'has_availability':has_availability_choice,}
 
         num_data, cat_data = st.columns(2)
         user_input_num = pd.DataFrame(user_input_num, index = ['Input Data'])
@@ -329,7 +346,7 @@ elif menu == 'Model Prediction':
         user_input_cat = user_input_cat.T
         cat_data.write(user_input_cat)  
 
-        predict_array = [host_response_rate,host_acceptance_rate, bedroom,bathroom, bed,accomodates,ny_neighborhood,room_type,instant_booking,has_availability,superhost,host_response_time]
+        predict_array = [host_response_rate,host_acceptance_rate, bedroom,bathroom, bed,accomodates,ny_neighborhood,room_type,instant_booking,has_availability,Air_Conditioning,Cooking_Basics,Entertainment,Television_SoundSystem]
 
         value_to_predict = pd.DataFrame([predict_array], columns=X.columns)
 
@@ -381,13 +398,21 @@ elif menu == 'Model Prediction':
         room_type_choice = st.sidebar.selectbox(label='Room Type', options=room_type_list)
         room_type = data.loc[data.room_type == room_type_choice, 'room_type_enc'].values[0]
 
-        accomodates = st.sidebar.slider('Number of guests', 0, 16, 7)
+        accomodates = st.sidebar.slider('Number of guests', 1, 16, 7)
 
-        bedroom = st.sidebar.slider('Number of bedrooms', 0, 22, 4)
+        bedroom = st.sidebar.slider('Number of bedrooms', 1, 22, 4)
 
-        bathroom = st.sidebar.slider('Number of bathrooms', 0, 21, 10)
+        bathroom = st.sidebar.slider('Number of bathrooms', 1, 21, 10)
 
-        bed = st.sidebar.slider('Number of beds', 0, 58, 7)
+        bed = st.sidebar.slider('Number of beds', 1, 58, 7)
+
+        Cooking_Basics = st.sidebar.slider('Have Cooking Basics? (1 = Yes; 0 = No)', 0,1,1)
+
+        Entertainment = st.sidebar.slider('Have Home Entertainment? (1 = Yes; 0 = No)', 0,1,1)
+
+        Television_SoundSystem = st.sidebar.slider('Have Television / Sound System?? (1 = Yes; 0 = No)', 0,1,1)
+
+        Air_Conditioning = st.sidebar.slider('Have Air Conditioning?? (1 = Yes; 0 = No)', 0,1,1)
 
         instant_booking_choice = st.sidebar.selectbox(label='Instant_booking (t = True; f = False)', options=instant_booking_list)
         instant_booking = data.loc[data.instant_bookable == instant_booking_choice, 'instant_bookable_enc'].values[0]
@@ -395,28 +420,25 @@ elif menu == 'Model Prediction':
         has_availability_choice = st.sidebar.selectbox(label='Has Availability (t = True; f = False)', options=has_availability_list)
         has_availability = data.loc[data.has_availability == has_availability_choice, 'has_availability_enc'].values[0]
 
-        superhost_choice = st.sidebar.selectbox(label='Superhost (t = True; f = False)', options=superhost_list)
-        superhost = data.loc[data.host_is_superhost == superhost_choice, 'host_is_superhost_enc'].values[0]
-
-        host_response_time_choice = st.sidebar.selectbox(label='host_response_time', options=host_response_time_list)
-        host_response_time = data.loc[data.host_response_time == host_response_time_choice, 'host_response_time_enc'].values[0]
-        
-        host_response_rate = st.sidebar.slider('Host Response Rate(%)', 0, 100, 86)   
-        host_acceptance_rate = st.sidebar.slider('Host Acceptance Rate(%)', 0, 100, 73)
+        host_response_rate = st.sidebar.slider('Host Response Rate(%)', 0, 100, 80)   
+        host_acceptance_rate = st.sidebar.slider('Host Acceptance Rate(%)', 0, 100, 75)
 
         user_input_num = {'host_response_rate': host_response_rate,
         'host_acceptance_rate':host_acceptance_rate, 
         'bedroom':bedroom,
         'bathroom':bathroom, 
         'bed':bed,
-        'accomodates':accomodates}
+        'accomodates':accomodates,
+        'air conditioning':Air_Conditioning,
+        'cooking_basics':Cooking_Basics,
+        'home entertainment':Entertainment,
+        'Television / sound system':Television_SoundSystem}
 
         user_input_cat = {'sg_neighborhood':sg_neighborhood_choice,
         'room_type':room_type_choice,
         'instant_booking':instant_booking_choice,
-        'has_availability':has_availability_choice,
-        'is_superhost':superhost_choice,
-        'host_response_time':host_response_time_choice}
+        'has_availability':has_availability_choice,}
+
 
         num_data, cat_data = st.columns(2)
         user_input_num = pd.DataFrame(user_input_num, index = ['Input Data'])
@@ -427,7 +449,7 @@ elif menu == 'Model Prediction':
         user_input_cat = user_input_cat.T
         cat_data.write(user_input_cat)  
 
-        predict_array = [host_response_rate,host_acceptance_rate, bedroom,bathroom, bed,accomodates,sg_neighborhood,room_type,instant_booking,has_availability,superhost,host_response_time]
+        predict_array = [host_response_rate,host_acceptance_rate, bedroom,bathroom, bed,accomodates,sg_neighborhood,room_type,instant_booking,has_availability,Air_Conditioning,Cooking_Basics,Entertainment,Television_SoundSystem]
 
         value_to_predict = pd.DataFrame([predict_array], columns=X.columns)
 
